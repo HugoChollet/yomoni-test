@@ -20,3 +20,8 @@ export const fetchCharacters = async (
 
   return response.data;
 };
+
+export const fetchSpecificData = async (url: string) => {
+  const response = await axios.get(url);
+  return response.data;
+};

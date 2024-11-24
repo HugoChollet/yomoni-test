@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { Text, ActivityIndicator, Button, Searchbar } from "react-native-paper";
 import { fetchCharacters, fetchEpisodes } from "../api/rickandmortyapi";
-import { CardItem } from "../components/CardItem";
+import { CardItem } from "../components/cardItem";
 
 export const ListScreen = ({ navigation }: any) => {
   const [data, setData] = useState<any[]>([]);
@@ -57,13 +57,17 @@ export const ListScreen = ({ navigation }: any) => {
     setPage(1);
   };
 
-  const renderCard = ({ item }: { item: any }) => (
-    <CardItem
-      item={item}
-      type={type}
-      onPress={() => navigation.navigate("Detail", { item })}
-    />
-  );
+  const renderCard = ({ item }: { item: any }) => {
+    const navigateToDetail = () => {
+      if (type === "characters") {
+        navigation.navigate("CharacterDetail", { item });
+      } else {
+        navigation.navigate("EpisodeDetail", { episodeId: item.id });
+      }
+    };
+
+    return <CardItem item={item} type={type} onPress={navigateToDetail} />;
+  };
 
   const renderEmptyList = () => (
     <View style={styles.emptyContainer}>
