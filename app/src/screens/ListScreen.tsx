@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { Card, Text, ActivityIndicator, Button } from "react-native-paper";
-import { fetchFilms, fetchCharacters } from "../api/swapi";
+import { fetchEpisodes, fetchCharacters } from "../api/rickandmortyapi";
 
 export const ListScreen = ({ navigation }: any) => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const loadData = async (type: "films" | "characters") => {
+  const loadData = async (type: "episodes" | "characters") => {
     setLoading(true);
     const result =
-      type === "films" ? await fetchFilms() : await fetchCharacters();
+      type === "episodes" ? await fetchEpisodes() : await fetchCharacters();
     setData(result);
     setLoading(false);
   };
 
   useEffect(() => {
-    loadData("films");
+    loadData("episodes");
   }, []);
 
   const renderCard = ({ item }: { item: any }) => (
@@ -33,8 +33,8 @@ export const ListScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
       <View style={styles.buttonRow}>
-        <Button mode="contained" onPress={() => loadData("films")}>
-          Films
+        <Button mode="contained" onPress={() => loadData("episodes")}>
+          Episodes
         </Button>
         <Button mode="contained" onPress={() => loadData("characters")}>
           Characters
