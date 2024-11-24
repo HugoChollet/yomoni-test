@@ -34,5 +34,8 @@ The purpose of this project is to create a simple mobile app with React-Native, 
 ## Compatible
 
 Web :
+![image](https://github.com/user-attachments/assets/1b6b0d0f-55c4-4b00-9cc2-9d5f7ad1f1fe)
+![image](https://github.com/user-attachments/assets/beb9632e-b87f-44ae-808c-12c0e447e38d)
+![image](https://github.com/user-attachments/assets/57d05133-9ab9-4ded-a065-7f3460329e66)
 
 Mobile :
