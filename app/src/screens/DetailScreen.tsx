@@ -10,7 +10,6 @@ export const DetailScreen = ({ route }: any) => {
 
   const renderCharacterDetails = () => (
     <>
-      {/* Image */}
       <Image
         source={{ uri: item.image || placeholderImage }}
         style={styles.image}
@@ -43,17 +42,15 @@ export const DetailScreen = ({ route }: any) => {
 
   const renderEpisodeDetails = () => (
     <>
-      {/* Episode Info */}
       <Card style={styles.card}>
         <Card.Content>
           <Text variant="headlineMedium" style={styles.name}>
-            Episode: {item.episode}
+            {item.name}
           </Text>
-          <Caption style={styles.caption}>{item.name}</Caption>
+          <Caption style={styles.caption}>Episode: {item.episode}</Caption>
         </Card.Content>
       </Card>
 
-      {/* Air Date and Characters */}
       <Card style={styles.card}>
         <Card.Content>
           <Text variant="titleMedium">Details</Text>
@@ -62,7 +59,6 @@ export const DetailScreen = ({ route }: any) => {
         </Card.Content>
       </Card>
 
-      {/* Appearing Characters */}
       <Card style={styles.card}>
         <Card.Content>
           <Text variant="titleMedium">Appearing Characters</Text>

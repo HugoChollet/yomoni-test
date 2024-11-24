@@ -59,7 +59,7 @@ export const ListScreen = ({ navigation }: any) => {
           source={{ uri: item.image || placeholderImage }}
           style={styles.cardImage}
         />
-        <View style={styles.cardText}>
+        <View>
           <Text variant="titleMedium">
             {item.name || `Episode: ${item.episode}`}
           </Text>
@@ -136,9 +136,6 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 30,
     marginRight: 12,
-  },
-  cardText: {
-    flex: 1,
   },
   row: {
     flexDirection: "row",
