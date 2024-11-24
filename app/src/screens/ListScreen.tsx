@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View, Image } from "react-native";
-import { Card, Text, ActivityIndicator, Button } from "react-native-paper";
+import {
+  Card,
+  Text,
+  ActivityIndicator,
+  Button,
+  Searchbar,
+} from "react-native-paper";
 import { fetchCharacters, fetchEpisodes } from "../api/rickandmortyapi";
 import { getStatusEmoji } from "../utils/getStatusEmoji";
 
@@ -13,14 +19,19 @@ export const ListScreen = ({ navigation }: any) => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const loadData = async (newType: "characters" | "episodes", page: number) => {
+  const loadData = async (
+    newType: "characters" | "episodes",
+    page: number,
+    query: string = ""
+  ) => {
     setLoading(true);
     try {
       const result =
         newType === "characters"
-          ? await fetchCharacters(page)
-          : await fetchEpisodes(page);
+          ? await fetchCharacters(page, query)
+          : await fetchEpisodes(page, query);
       setData((prevData) =>
         page === 1 ? result.results : [...prevData, ...result.results]
       );
@@ -28,7 +39,9 @@ export const ListScreen = ({ navigation }: any) => {
 
       setHasNextPage(result.info.next !== null);
     } catch (error) {
-      console.error("Error loading data:", error);
+      console.debug("Error loading data:", error);
+      setData([]);
+      setHasNextPage(false);
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -37,8 +50,8 @@ export const ListScreen = ({ navigation }: any) => {
 
   useEffect(() => {
     setPage(1);
-    loadData(type, 1);
-  }, [type]);
+    loadData(type, 1, searchQuery);
+  }, [type, searchQuery]);
 
   const handleLoadMore = () => {
     if (!loadingMore && hasNextPage) {
@@ -47,6 +60,11 @@ export const ListScreen = ({ navigation }: any) => {
       setPage(nextPage);
       loadData(type, nextPage);
     }
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    setPage(1);
   };
 
   const renderCard = ({ item }: { item: any }) => (
@@ -75,7 +93,6 @@ export const ListScreen = ({ navigation }: any) => {
               <Text>Air Date: {item.air_date}</Text>
             )}
           </View>
-          {/* Common Info */}
           {type === "characters" ? (
             <Text>Species: {item.species}</Text>
           ) : (
@@ -86,8 +103,27 @@ export const ListScreen = ({ navigation }: any) => {
     </Card>
   );
 
+  const renderEmptyList = () => (
+    <View style={styles.emptyContainer}>
+      <Text variant="titleMedium" style={styles.emptyText}>
+        No results found
+      </Text>
+      <Text style={styles.emptySubText}>
+        Try adjusting your search or switching the type (Characters/Episodes).
+      </Text>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
+      <Searchbar
+        placeholder={`Search ${
+          type === "characters" ? "Characters" : "Episodes"
+        }`}
+        value={searchQuery}
+        onChangeText={handleSearchChange}
+        style={styles.searchbar}
+      />
       <View style={styles.buttonRow}>
         <Button mode="contained" onPress={() => setType("characters")}>
           Characters
@@ -96,7 +132,6 @@ export const ListScreen = ({ navigation }: any) => {
           Episodes
         </Button>
       </View>
-      {/* List */}
       {loading && page === 1 ? (
         <ActivityIndicator animating={true} size="large" />
       ) : (
@@ -106,6 +141,7 @@ export const ListScreen = ({ navigation }: any) => {
           renderItem={renderCard}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
+          ListEmptyComponent={renderEmptyList}
           ListFooterComponent={
             loadingMore ? (
               <ActivityIndicator animating={true} size="small" />
@@ -148,5 +184,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 16,
+  },
+  searchbar: {
+    marginBottom: 16,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 32,
+  },
+  emptyText: {
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  emptySubText: {
+    color: "gray",
+    textAlign: "center",
+    paddingHorizontal: 20,
   },
 });
