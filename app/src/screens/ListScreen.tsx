@@ -9,19 +9,44 @@ export const ListScreen = ({ navigation }: any) => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [type, setType] = useState<"characters" | "episodes">("characters");
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(true);
 
-  const loadData = async (type: "characters" | "episodes") => {
+  const loadData = async (newType: "characters" | "episodes", page: number) => {
     setLoading(true);
-    const result =
-      type === "characters" ? await fetchCharacters() : await fetchEpisodes();
-    setType(type);
-    setData(result);
-    setLoading(false);
+    try {
+      const result =
+        newType === "characters"
+          ? await fetchCharacters(page)
+          : await fetchEpisodes(page);
+      setData((prevData) =>
+        page === 1 ? result.results : [...prevData, ...result.results]
+      );
+      console.log("data", result);
+
+      setHasNextPage(result.info.next !== null);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
   };
 
   useEffect(() => {
-    loadData("characters"); // Default to characters
-  }, []);
+    setPage(1);
+    loadData(type, 1);
+  }, [type]);
+
+  const handleLoadMore = () => {
+    if (!loadingMore && hasNextPage) {
+      setLoadingMore(true);
+      const nextPage = page + 1;
+      setPage(nextPage);
+      loadData(type, nextPage);
+    }
+  };
 
   const getStatusEmoji = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -40,18 +65,15 @@ export const ListScreen = ({ navigation }: any) => {
       onPress={() => navigation.navigate("Detail", { item })}
     >
       <Card.Content style={styles.cardContent}>
-        {/* Image */}
         <Image
           source={{ uri: item.image || placeholderImage }}
           style={styles.cardImage}
         />
-        {/* Details */}
         <View style={styles.cardText}>
           <Text variant="titleMedium">
             {item.name || `Episode: ${item.episode}`}
           </Text>
           <View style={styles.row}>
-            {/* Status */}
             {type === "characters" ? (
               <View style={styles.row}>
                 <Text style={styles.statusText}>
@@ -76,23 +98,29 @@ export const ListScreen = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      {/* Buttons */}
       <View style={styles.buttonRow}>
-        <Button mode="contained" onPress={() => loadData("characters")}>
+        <Button mode="contained" onPress={() => setType("characters")}>
           Characters
         </Button>
-        <Button mode="contained" onPress={() => loadData("episodes")}>
+        <Button mode="contained" onPress={() => setType("episodes")}>
           Episodes
         </Button>
       </View>
       {/* List */}
-      {loading ? (
+      {loading && page === 1 ? (
         <ActivityIndicator animating={true} size="large" />
       ) : (
         <FlatList
           data={data}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderCard}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={
+            loadingMore ? (
+              <ActivityIndicator animating={true} size="small" />
+            ) : null
+          }
         />
       )}
     </View>
