@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View, Image } from "react-native";
 import { Card, Text, ActivityIndicator, Button } from "react-native-paper";
 import { fetchCharacters, fetchEpisodes } from "../api/rickandmortyapi";
+import { getStatusEmoji } from "../utils/getStatusEmoji";
 
 const placeholderImage = "https://via.placeholder.com/150"; // Placeholder for episodes
 
@@ -45,17 +46,6 @@ export const ListScreen = ({ navigation }: any) => {
       const nextPage = page + 1;
       setPage(nextPage);
       loadData(type, nextPage);
-    }
-  };
-
-  const getStatusEmoji = (status: string) => {
-    switch (status?.toLowerCase()) {
-      case "alive":
-        return "🟢";
-      case "dead":
-        return "🔴";
-      default:
-        return "⚪️";
     }
   };
 
