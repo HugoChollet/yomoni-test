@@ -39,3 +39,7 @@ Web :
 ![image](https://github.com/user-attachments/assets/57d05133-9ab9-4ded-a065-7f3460329e66)
 
 Mobile :
+![image](https://github.com/user-attachments/assets/f0761596-8988-49bc-bef2-63e07e184160)
+![image](https://github.com/user-attachments/assets/be51ceb7-7388-45c1-bb3d-6036e65651ed)
+![image](https://github.com/user-attachments/assets/d96c5d46-5c7e-4dcf-821e-5be7916efa11)
+![image](https://github.com/user-attachments/assets/98daf16f-4625-4c91-9b78-11773dd53a49)
