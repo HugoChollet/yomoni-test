@@ -11,12 +11,6 @@ import { CardItem } from "../components/cardItem";
 import { fetchSpecificData } from "../api/rickandmortyapi";
 import { ScrollView } from "react-native-gesture-handler";
 
-const fetchEpisode = async (id: string) => {
-  const response = await fetch(`https://rickandmortyapi.com/api/episode/${id}`);
-  const data = await response.json();
-  return data;
-};
-
 export const EpisodeDetail = ({ route, navigation }: any) => {
   const { episodeId } = route.params;
   const [episode, setEpisode] = useState<any>(null);
@@ -25,7 +19,9 @@ export const EpisodeDetail = ({ route, navigation }: any) => {
   useEffect(() => {
     const loadEpisode = async () => {
       try {
-        const data = await fetchEpisode(episodeId);
+        const data = await fetchSpecificData(
+          `https://rickandmortyapi.com/api/episode/${episodeId}`
+        );
         setEpisode(data);
       } catch (error) {
         console.error(error);
@@ -47,6 +43,7 @@ export const EpisodeDetail = ({ route, navigation }: any) => {
     const [characterData, setCharacterData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
+    // Fetch for each Character card
     useEffect(() => {
       const fetchData = async () => {
         try {
