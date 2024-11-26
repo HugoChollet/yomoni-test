@@ -1,6 +1,5 @@
 import React from "react";
-import { StyleSheet, FlatList, View, Image } from "react-native";
-
+import { StyleSheet, View, Image } from "react-native";
 import { Text, Card, Divider } from "react-native-paper";
 import { CardItem } from "../components/cardItem";
 import { getStatusEmoji } from "../utils/getStatusEmoji";
@@ -9,37 +8,26 @@ import { ScrollView } from "react-native-gesture-handler";
 const placeholderImage = "https://via.placeholder.com/150";
 
 export const CharacterDetail = ({ route, navigation }: any) => {
-  const { item } = route.params;
-
-  const renderEpisodeCard = ({ item }: { item: string }) => {
-    const episodeId = item.split("/").pop();
-    return (
-      <CardItem
-        item={{ name: `Episode ${episodeId}`, episode: item }}
-        type="episodes"
-        onPress={() => navigation.navigate("EpisodeDetail", { episodeId })}
-      />
-    );
-  };
+  const character = route.params.item;
 
   return (
     <ScrollView>
       <Image
-        source={{ uri: item.image || placeholderImage }}
+        source={{ uri: character.image || placeholderImage }}
         style={styles.image}
       />
 
       <Card style={styles.card}>
         <Card.Content>
           <Text variant="headlineMedium" style={styles.name}>
-            {item.name}
+            {character.name}
           </Text>
           <Divider style={styles.divider} />
           <Text variant="titleSmall">
-            {getStatusEmoji(item.status)} {item.status}
+            {getStatusEmoji(character.status)} {character.status}
           </Text>
-          <Text>Species: {item.species}</Text>
-          <Text>Gender: {item.gender}</Text>
+          <Text>Species: {character.species}</Text>
+          <Text>Gender: {character.gender}</Text>
         </Card.Content>
       </Card>
 
@@ -47,16 +35,27 @@ export const CharacterDetail = ({ route, navigation }: any) => {
         <Card.Content>
           <Text variant="titleMedium">Location</Text>
           <Divider style={styles.divider} />
-          <Text>Origin: {item.origin?.name}</Text>
-          <Text>Last Location: {item.location?.name}</Text>
+          <Text>Origin: {character.origin?.name}</Text>
+          <Text>Last Location: {character.location?.name}</Text>
         </Card.Content>
       </Card>
+
       <Text style={[styles.sectionTitle, styles.titleOut]}>Episodes:</Text>
-      <FlatList
-        data={item.episode}
-        keyExtractor={(episodeUrl) => episodeUrl}
-        renderItem={renderEpisodeCard}
-      />
+      <View style={styles.episodesContainer}>
+        {character.episode.map((episodeUrl: string) => {
+          const episodeId = episodeUrl.split("/").pop();
+          return (
+            <CardItem
+              key={episodeUrl}
+              item={{ name: `Episode ${episodeId}`, episode: episodeUrl }}
+              type="episodes"
+              onPress={() =>
+                navigation.navigate("EpisodeDetail", { episodeId })
+              }
+            />
+          );
+        })}
+      </View>
     </ScrollView>
   );
 };
@@ -96,5 +95,8 @@ const styles = StyleSheet.create({
   },
   caption: {
     textAlign: "center",
+  },
+  episodesContainer: {
+    paddingHorizontal: 16,
   },
 });

@@ -108,13 +108,15 @@ export const EpisodeDetail = ({ route, navigation }: any) => {
       <Text style={[styles.sectionTitle, styles.titleOut]}>
         Appearing Characters:
       </Text>
-      <FlatList
-        data={episode.characters} // Array of character URLs
-        keyExtractor={(characterUrl) => characterUrl}
-        renderItem={({ item }) => (
-          <RenderCharacterCard item={item} navigation={navigation} />
-        )}
-      />
+      <View style={styles.characterList}>
+        {episode.characters.map((characterUrl: string) => (
+          <RenderCharacterCard
+            key={characterUrl}
+            item={characterUrl}
+            navigation={navigation}
+          />
+        ))}
+      </View>
     </ScrollView>
   );
 };
@@ -154,5 +156,8 @@ const styles = StyleSheet.create({
   },
   caption: {
     textAlign: "center",
+  },
+  characterList: {
+    marginHorizontal: 16,
   },
 });
